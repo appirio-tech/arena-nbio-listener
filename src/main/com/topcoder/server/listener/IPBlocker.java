@@ -1,3 +1,6 @@
+/*
+* Copyright (C) - 2014 TopCoder Inc., All Rights Reserved.
+*/
 package com.topcoder.server.listener;
 
 import java.net.InetAddress;
@@ -9,12 +12,29 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.topcoder.shared.util.concurrent.ConcurrentHashSet;
 import com.topcoder.shared.util.logging.Logger;
 
+/**
+ * <p>
+ * Changes in version 1.1 (Make Admin Listener Work With Main Listener Through Loopback Address v1.0)
+ * <ol>
+ *      <li>Update {@link #IPBlocker(Collection ips, boolean isAllowedSet)} method.</li>
+ *      <li>Add {@link #ALLOWED_LOOP_BACK_IP} method.</li>
+ * </ol>
+ * </p>
+ * @author savon_cn
+ * @version 1.1
+ *
+ */
 public final class IPBlocker {
 
     private static final Logger cat = Logger.getLogger(IPBlocker.class);
 
     private final Map banExpiration = new ConcurrentHashMap();
     private final Collection ipsSet = new ConcurrentHashSet();
+    /**
+     * The loop back ip
+     * @since 1.1
+     */
+    public static final String ALLOWED_LOOP_BACK_IP = "127.0.0.1";
     private final boolean isAllowedSet;
 
     public IPBlocker(Collection ips, boolean isAllowedSet) {
@@ -26,6 +46,8 @@ public final class IPBlocker {
             try {
                 String localIP = InetAddress.getLocalHost().getHostAddress();
                 ipsSet.add(localIP);
+                //we can set loop back as allowed
+                ipsSet.add(ALLOWED_LOOP_BACK_IP);
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
